@@ -12,7 +12,7 @@ define('RDIO_CONSUMER_SECRET', '');     // put secret here
 define("WWWROOT", me());
 define("HOMEDIR", dirname(__FILE__));
 
-set_include_path(HOMEDIR.PATH_SEPARATOR.HOMEDIR."/lib");
+set_include_path(HOMEDIR.PATH_SEPARATOR.HOMEDIR.PATH_SEPARATOR."lib");
 
 /* Rdio includes, see
  * http://developer.rdio.com/docs/read/rest/rdiosimple
