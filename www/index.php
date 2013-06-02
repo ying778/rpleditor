@@ -25,7 +25,8 @@ $loggedin = false;
 
 session_start();
 
-if (isset($_GET['logout'])) {
+if (isset($_GET['logout']))
+{
 	session_destroy();
 	require('templates/header.php');
 	require('templates/login.php');
@@ -118,7 +119,8 @@ function asset($file)
 
 function me()
 {
-	if (@$_SERVER["HTTPS"] == "on") {
+	if (@$_SERVER["HTTPS"] == "on")
+	{
 		$me = ($_SERVER["SERVER_PORT"] != 443)
 			? "https://{$_SERVER["SERVER_PORT"]}"
 			: "https://";
