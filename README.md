@@ -9,4 +9,7 @@ http://developer.rdio.com/docs/read/rest/rdiosimple
 Working version at:
 http://rpleditor.mirawest.com/
 
+Fork the code at:
+https://github.com/ying17/rpleditor
+
 Enjoy!
