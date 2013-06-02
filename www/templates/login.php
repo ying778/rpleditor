@@ -4,4 +4,4 @@
 	<p>A simple tool that makes it easy to sort and manage your Rdio playlists.</p>
 	<p><a class="btn btn-primary btn-large" href="<?=WWWROOT?>/?login">Continue &gt;</a></p>
 </div>
-</div> <?//container?>
+</div>
