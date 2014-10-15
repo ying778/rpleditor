@@ -32,6 +32,7 @@
 					<div>
 					<button class="btn btn-small editbutton"><i class="icon-edit"></i> Edit</button>
 					<button class="btn btn-small savebutton" style="display:none"><i class="icon-file"></i> Save</button>
+					<button class="btn btn-small dedupebutton" style="display:none"><i class="icon-minus"></i> Remove Duplicates</button>
 <?/*					<button class="btn btn-small playerbutton" embedurl="<?=htmlentities($playlist->embedUrl)?>"><i class="icon-play"></i> Play</button>*/?>
 					</div>
 				</td>
@@ -68,7 +69,23 @@ $('.editbutton').click(function() {
 	row.next('tr').find('td.edit').load('<?=WWWROOT?>/?playlist='+playlist, function() {
 		me.html(me.data('orightml')).attr('disabled', false);
 		me.parent().find('.savebutton').show();
+		me.parent().find('.dedupebutton').show();
 	});
+});
+
+$('.dedupebutton').click(function () {
+  var tracks = {},
+    playlist = $(this).closest('tr').next('tr').find('table.playlist tbody');
+
+  playlist.find('tr[track]').each(function () { 
+    var track = $(this).attr("track"); 
+    if(track in tracks) { 
+      $(this).find('td a.close.delete').trigger('click');
+    }
+    else {
+      tracks[track] = true;
+    }
+  });
 });
 
 $('.savebutton').click(function() {
@@ -76,6 +93,7 @@ $('.savebutton').click(function() {
 	var row = me.closest('tr');
 	var playlist = me.closest('[playlist]').attr('playlist');
 	me.data('orightml', me.html()).text('Saving...').attr('disabled', true);
+  me.parent().find('.dedupebutton').attr('disabled', true);
 	me.next('.label').remove();
 	params = row.next('tr').find('form').serialize();
 	$.post('<?=WWWROOT?>/?save', params, function(data, textStatus, jqXHR) {
@@ -84,6 +102,7 @@ $('.savebutton').click(function() {
 				me.html(me.data('orightml')).attr('disabled', false);
 				me.parent().find('.savebutton').show();
 				me.parent().find('.savebutton').after('<span class="label label-success" style="margin-left:10px">Saved</span>');
+				me.parent().find('.dedupebutton').attr('disabled', false);
 			});
 		}
 	}, 'JSON');
