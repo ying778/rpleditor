@@ -32,6 +32,7 @@
 					<div>
 					<button class="btn btn-small editbutton"><i class="icon-edit"></i> Edit</button>
 					<button class="btn btn-small savebutton" style="display:none"><i class="icon-file"></i> Save</button>
+					<button class="btn btn-small shufflebutton" style="display:none"><i class="icon-random"></i> Save</button>
 <?/*					<button class="btn btn-small playerbutton" embedurl="<?=htmlentities($playlist->embedUrl)?>"><i class="icon-play"></i> Play</button>*/?>
 					</div>
 				</td>
@@ -68,13 +69,32 @@ $('.editbutton').click(function() {
 	row.next('tr').find('td.edit').load('<?=WWWROOT?>/?playlist='+playlist, function() {
 		me.html(me.data('orightml')).attr('disabled', false);
 		me.parent().find('.savebutton').show();
+		me.parent().find('.shufflebutton').show();
 	});
+});
+
+// http://jsfiddle.net/98q9S/
+function shuffleRows(parent) {
+    var rows = parent.children();
+    for (var i = rows.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = rows[i];
+        rows.eq(i - 1).after(rows[j]);
+        rows.eq(j - 1).after(temp);
+    }
+}
+
+$('.shufflebutton').click(function () {
+	var playlist = $(this).closest('tr').next('tr').find('table.playlist tbody');
+  shuffleRows(playlist);
+  playlist.find('tr').addClass('moved');
 });
 
 $('.savebutton').click(function() {
 	var me = $(this);
 	var row = me.closest('tr');
-	var playlist = me.closest('[playlist]').attr('playlist');
+  var playlist = me.closest('[playlist]').attr('playlist');
+  me.parent().find('.shufflebutton').attr('disabled', true);
 	me.data('orightml', me.html()).text('Saving...').attr('disabled', true);
 	me.next('.label').remove();
 	params = row.next('tr').find('form').serialize();
@@ -84,6 +104,7 @@ $('.savebutton').click(function() {
 				me.html(me.data('orightml')).attr('disabled', false);
 				me.parent().find('.savebutton').show();
 				me.parent().find('.savebutton').after('<span class="label label-success" style="margin-left:10px">Saved</span>');
+        me.parent().find('.shufflebutton').attr('disabled', false);
 			});
 		}
 	}, 'JSON');
