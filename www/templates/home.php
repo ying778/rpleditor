@@ -85,7 +85,7 @@ function shuffleRows(parent) {
 }
 
 $('.shufflebutton').click(function () {
-	var playlist = $(this).closest('tr').next('tr').find('table.playlist tbody');
+  var playlist = $(this).closest('tr').next().find('.table tbody')
   shuffleRows(playlist);
   playlist.find('tr').addClass('moved');
 });
