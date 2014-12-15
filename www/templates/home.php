@@ -75,7 +75,7 @@ $('.editbutton').click(function() {
 
 $('.dedupebutton').click(function () {
   var tracks = {},
-    playlist = $(this).closest('tr').next('tr').find('table.playlist tbody');
+    playlist = $(this).closest('tr').next().find('.table tbody');
 
   playlist.find('tr[track]').each(function () { 
     var track = $(this).attr("track"); 
