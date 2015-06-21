@@ -55,7 +55,7 @@ $(document).ready(function() {
 		function() {$(this).find('.close').hide()}
 	);
 
-	$(tbl).find('>*')
+	$(tbl).find('tbody')
 		.sortable({
 			placeholder:"placeholder",
 			helper:function(e, ui) {
@@ -69,7 +69,11 @@ $(document).ready(function() {
 			},
 			stop:function(e, ui) {
 				$(ui.item).removeClass('moving');
-				$(ui.item).addClass('moved');
+				if ($(ui.item).attr('index') != $(ui.item).index()) {
+					$(ui.item).addClass('moved');
+				} else {
+					$(ui.item).removeClass('moved');
+				}
 			},
 			axis:'y',
 			cursor:'move',
