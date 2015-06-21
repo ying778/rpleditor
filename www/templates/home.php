@@ -3,7 +3,8 @@
 <div class="row" style="border-bottom:1px solid #c0c0c0;margin-bottom:20px">
 	<div class="span12">
 		<h3>
-			<?=htmlentities($_SESSION["user"]->firstName)?>'s Playlists
+			<img src="<?=$_SESSION["user"]->icon?>" width="50" height="50">
+			<?=htmlentities($_SESSION["user"]->firstName)?>'s Rdio Playlists
 			<a class="btn pull-right" href="<?=WWWROOT?>/?logout">Logout</a>
 			<a class="btn pull-right" href="<?=WWWROOT?>" style="margin-right:5px">Refresh</a>
 		</h3>

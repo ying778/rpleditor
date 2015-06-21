@@ -1,4 +1,5 @@
 body{margin:0;padding:30px}
+table.playlist thead {cursor:pointer;background-color:#f0f0f0}
 table.playlist tr.placeholder td {border-top:1px dashed black;border-bottom:1px dashed black;background-color:#f5f5f5}
 table.playlist tr.moved {background-color:#ffffee}
 table.playlist tr.moving {background-color:#ffffcc;font-weight:bold}
