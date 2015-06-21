@@ -8,6 +8,8 @@
 	<th>Title</th>
 	<th>Artist</th>
 	<th>Album</th>
+	<th>Duration</th>
+	<th>Explicit</th>
 	<th style="width:20px"></th>
 </tr>
 </thead>
@@ -22,10 +24,11 @@
 		</td>
 		<td>
 			<?=htmlentities($t->name)?>
-			<?if ($t->isExplicit) {?><span class="label label-important" style="font-size:9px">Explicit</span><?}?>
 		</td>
 		<td><?=htmlentities($t->artist)?></td>
 		<td><?=$t->album?></td>
+		<td sorttable_customkey="<?=$t->duration?>" style="text-align:right"><?=sprintf("%d:%02d", floor($t->duration/60), ($t->duration%60))?></td>
+		<td sorttable_customkey="<?=$t->isExplicit?0:1?>"><?if ($t->isExplicit) {?><span class="label label-important" style="font-size:9px">Explicit</span><?}?></td>
 		<td sorttable_customkey="<?=$i?>"><a class="close delete" style="display:none" title="Delete">&times;</a></td>
 	</tr>
 <?}?>
