@@ -22,12 +22,11 @@
 # THE SOFTWARE.
 #
 
-define('RDIO_CLIENT_ID', '');
-define('RDIO_CLIENT_SECRET', '');
-define('RDIO_REDIRECT_URI', '');
+require_once 'config.php';
+require_once 'lib/rdiolib-php/rdiolib.php';
+
 define("WWWROOT", me());
 
-require_once 'lib/rdiolib-php/rdiolib.php';
 $rdio = new RdioLib(RDIO_CLIENT_ID, RDIO_CLIENT_SECRET, RDIO_REDIRECT_URI);
 session_start();
 
@@ -71,7 +70,7 @@ if (isset($_GET['save']))
 		'playlist'=>$_POST["playlist"],
 		'tracks'=>implode(",", $_POST['keys'])
 		]);
-	die(json_encode(array('status'=>'ok')));
+	die(json_encode(['status'=>'ok']));
 }
 elseif (isset($_GET['delete']))
 {
@@ -81,7 +80,7 @@ elseif (isset($_GET['delete']))
 		'count'=>1,
 		'tracks'=>$_POST['track']
 		]);
-	die(json_encode(array('status'=>'ok')));
+	die(json_encode(['status'=>'ok']));
 }
 elseif (isset($_GET['playlist']))
 {
