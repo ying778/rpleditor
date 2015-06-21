@@ -1,0 +1,3 @@
+[submodule "www/lib/rdiolib-php"]
+	path = www/lib/rdiolib-php
+	url = git@github.com:ying17/rdiolib-php

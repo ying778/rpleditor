@@ -1,115 +1,107 @@
 <?php
-/* Rdio Playlist Editor
- * by Ying Zhang
- * https://github.com/ying17/rpleditor
- *
- * TODO: refactor to use slimframework.com
- */
+# Rdio Playlist Editor
+#
+# Copyright (c) 2015 Ying Zhang
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
 
-define('RDIO_CONSUMER_KEY', '');        // put key here
-define('RDIO_CONSUMER_SECRET', '');     // put secret here
-
+define('RDIO_CLIENT_ID', '');
+define('RDIO_CLIENT_SECRET', '');
+define('RDIO_REDIRECT_URI', '');
 define("WWWROOT", me());
-define("HOMEDIR", dirname(__FILE__));
 
-set_include_path(HOMEDIR.PATH_SEPARATOR.HOMEDIR.PATH_SEPARATOR."lib");
-
-/* Rdio includes, see
- * http://developer.rdio.com/docs/read/rest/rdiosimple
- */
-require_once 'rdio/rdio.php';
-
-$page = array('title'=>"Playlist Editor for Rdio");
-$rdio = new Rdio(array(RDIO_CONSUMER_KEY, RDIO_CONSUMER_SECRET));
-$loggedin = false;
-
+require_once 'lib/rdiolib-php/rdiolib.php';
+$rdio = new RdioLib(RDIO_CLIENT_ID, RDIO_CLIENT_SECRET, RDIO_REDIRECT_URI);
 session_start();
 
 if (isset($_GET['logout']))
 {
 	session_destroy();
+}
+elseif (isset($_GET['login']))
+{
+	$_SESSION["rpleditor_splash_displayed"] = true;
+}
+
+if (!isset($_SESSION["rpleditor_splash_displayed"]))
+{
 	require('templates/header.php');
 	require('templates/login.php');
 	require('templates/footer.php');
 	die;
 }
 
-if (@$_SESSION['oauth_token'] && @$_SESSION['oauth_token_secret'])
+$auth = $rdio->authenticate();
+if ($auth == RdioLib::AUTH_SUCCESS_INITIAL || $auth != RdioLib::AUTH_SUCCESS)
 {
-	$rdio->token = array($_SESSION['oauth_token'], $_SESSION['oauth_token_secret']);
-	if (@$_GET['oauth_verifier'])
-	{
-		$rdio->complete_authentication($_GET['oauth_verifier']);
-		$_SESSION['oauth_token'] = $rdio->token[0];
-		$_SESSION['oauth_token_secret'] = $rdio->token[1];
+	header('Location: '.WWWROOT);
+	die;
+}
 
-		$currentUser = $rdio->call('currentUser');
-		header('Location: '.WWWROOT);
-	}
+if (empty($_SESSION["user"]))
+{
+	$_SESSION["user"] = $rdio->currentUser()->result;
+}
 
-	$loggedin = true;
-	$currentUser = $rdio->call('currentUser');
+if (empty($_SESSION["user"]))
+{
+	session_destroy();
+	header('Location: '.WWWROOT);
+	die;
+}
 
-	if (!$currentUser)
-	{
-		session_destroy();
-		header('Location: '.WWWROOT);
-		die;
-	}
-
-	if (isset($_GET['save']))
-	{
-		$ret = $rdio->call('setPlaylistOrder', array(
-			'playlist'=>$_POST["playlist"],
-			'tracks'=>implode(",", $_POST['keys'])
-			));
-		die(json_encode(array('status'=>'ok')));
-	}
-	elseif (isset($_GET['delete']))
-	{
-		$ret = $rdio->call('removeFromPlaylist', array(
-			'playlist'=>$_POST["playlist"],
-			'index'=>$_POST['index'],
-			'count'=>1,
-			'tracks'=>$_POST['track']
-			));
-		die(json_encode(array('status'=>'ok')));
-	}
-	elseif (@$_GET['playlist'])
-	{
-		$tmp = $rdio->call('get', array('keys'=>$_GET['playlist'], 'extras'=>'trackKeys'))->result->$_GET['playlist'];
-		$trackarr = $tmp->trackKeys;
-		$tracks = $rdio->call('get', array('keys'=>implode(",", $trackarr)))->result;
-		require('templates/playlist.php');
-	}
-	else
-	{
-		$myPlaylists = $rdio->call('getPlaylists')->result->owned;
-		require('templates/header.php');
-		require('templates/home.php');
-		require('templates/footer.php');
-	}
+if (isset($_GET['save']))
+{
+	$ret = $rdio->setPlaylistOrder([
+		'playlist'=>$_POST["playlist"],
+		'tracks'=>implode(",", $_POST['keys'])
+		]);
+	die(json_encode(array('status'=>'ok')));
+}
+elseif (isset($_GET['delete']))
+{
+	$ret = $rdio->removeFromPlaylist([
+		'playlist'=>$_POST["playlist"],
+		'index'=>$_POST['index'],
+		'count'=>1,
+		'tracks'=>$_POST['track']
+		]);
+	die(json_encode(array('status'=>'ok')));
+}
+elseif (isset($_GET['playlist']))
+{
+	$tmp = $rdio->get(['keys'=>$_GET['playlist'], 'extras'=>'trackKeys'])->result->$_GET['playlist'];
+	$trackarr = $tmp->trackKeys;
+	$tracks = $rdio->get(['keys'=>implode(",", $trackarr)])->result;
+	require('templates/playlist.php');
 }
 else
 {
-	if (isset($_GET["login"]))
-	{
-		$authorize_url = $rdio->begin_authentication(WWWROOT);
-		$_SESSION['oauth_token'] = $rdio->token[0];
-		$_SESSION['oauth_token_secret'] = $rdio->token[1];
-		header('Location: '.$authorize_url);
-		die;
-	}
-	else
-	{
-		require('templates/header.php');
-		require('templates/login.php');
-		require('templates/footer.php');
-		die;
-	}
+	$myPlaylists = $rdio->getPlaylists()->result->owned;
+	require('templates/header.php');
+	require('templates/home.php');
+	require('templates/footer.php');
 }
 
-/* Functions
+/*
+ * Functions
  */
 
 function asset($file)

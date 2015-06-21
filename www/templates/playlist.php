@@ -1,7 +1,7 @@
 <form playlist="<?=htmlEntities($_GET['playlist'])?>">
 <input type="hidden" name="playlist" value="<?=htmlEntities($_GET['playlist'])?>">
 <p style="font-size:12px"><span class="label label-info">Instructions</span> Click column headings to sort. Drag &amp; drop rows to reorder. Remember to Save.</p>
-<table class="table table-condensed sortable" id="playlist<?=htmlEntities($_GET['playlist'])?>" style="font-size:12px">
+<table class="table table-condensed sortable playlist" id="playlist<?=htmlEntities($_GET['playlist'])?>" style="font-size:12px">
 <thead>
 <tr>
 	<th style="width:10px">Track</th>
@@ -57,14 +57,23 @@ $(document).ready(function() {
 
 	$(tbl).find('>*')
 		.sortable({
-			helper: function(e, ui) {
+			placeholder:"placeholder",
+			helper:function(e, ui) {
 				ui.children().each(function() {
 					$(this).width($(this).width());
 				});
 				return ui;
 			},
+			start:function(e, ui) {
+				$(ui.item).addClass('moving');
+			},
+			stop:function(e, ui) {
+				$(ui.item).removeClass('moving');
+				$(ui.item).addClass('moved');
+			},
 			axis:'y',
 			cursor:'move',
+			containment:"parent"
 		});
 });
 </script>
