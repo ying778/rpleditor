@@ -33,7 +33,7 @@ session_start();
 
 if (isset($_GET['logout']))
 {
-	session_destroy();
+	logout();
 }
 elseif (isset($_GET['login']))
 {
@@ -62,9 +62,7 @@ if (empty($_SESSION["user"]))
 
 if (empty($_SESSION["user"]))
 {
-	session_destroy();
-	header('Location: '.WWWROOT);
-	die;
+	logout();
 }
 
 if (isset($_GET['save']))
@@ -126,4 +124,11 @@ function me()
 
 	$me .= $_SERVER["SERVER_NAME"].str_replace('/index.php', '', $_SERVER["SCRIPT_NAME"]);
 	return $me;
+}
+
+function logout()
+{
+	session_destroy();
+	header('Location: '.WWWROOT);
+	die;
 }
