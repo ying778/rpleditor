@@ -63,7 +63,7 @@ $(document).ready(function() {
 
 		$.post('<?=WWWROOT?>/?playlist/save', params, function(data, textStatus, jqXHR) {
 			if (data.status == 'ok') {
-				row.next('tr').find('td.edit').load('<?=WWWROOT?>/?playlist='+playlist, function() {
+				row.next('tr').find('.tracks').load('<?=WWWROOT?>/?playlist='+playlist, function() {
 					me.attr('disabled', false);
 					msg.html('<span class="label label-success">Saved</span>');
 				});

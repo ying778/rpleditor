@@ -44,16 +44,12 @@ $(document).ready(function() {
 	sorttable.makeSortable(tbl);
 
 	$('a.delete').click(function() {
-		var me = $(this);
-		var index = $(this).closest('[index]').attr('index');
-		var track = $(this).closest('[track]').attr('track');
-		var playlist = me.closest('[playlist]').attr('playlist');
-		var params = {playlist:playlist, index:index, track:track};
-		$.post('<?=WWWROOT?>/?delete', params, function(data, textStatus, jqXHR) {
-			if (data.status == 'ok') {
-				me.closest('tr').fadeOut();
-			}
-		}, 'JSON');
+		var row = $(this).closest('tr');
+		if (row.hasClass('deleted')) {
+			row.removeClass('deleted');
+		} else {
+			row.addClass('deleted');
+		}
 	});
 
 	$(tbl).find('tr').hover(
