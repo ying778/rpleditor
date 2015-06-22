@@ -66,18 +66,76 @@ if (empty($_SESSION["user"]))
 
 if (isset($_GET['playlist']))
 {
-	$tmp = $rdio->get(['keys'=>$_GET['playlist'], 'extras'=>'trackKeys'])->result->$_GET['playlist'];
-	$trackarr = $tmp->trackKeys;
-	$tracks = $rdio->get(['keys'=>implode(",", $trackarr)])->result;
-	require('templates/playlist.php');
+	$playlist = $_GET["playlist"];
+	$ret = $rdio->get([
+		'keys'=>$playlist,
+		'extras'=>'trackKeys'
+		]);
+
+	if ($ret->status == 'ok')
+	{
+		$trackarr =& $ret->result->$playlist->trackKeys;
+		$tracks = $rdio->get(['keys'=>implode(",", $trackarr)])->result;
+		require('templates/playlist.php');
+	}
+	else
+	{
+		die('Unable to retrieve playlist.');
+	}
 }
 elseif (isset($_GET['playlist/save']))
 {
+	$delete =& $_POST['delete'];
+	$tracks =& $_POST['tracks'];
+	$delcount = 0;
+
+	if (!empty($delete) && !empty($tracks))
+	{
+		foreach ($delete as $track)
+		{
+			$index = array_search($track, $tracks);
+			if ($index !== false)
+			{
+				array_swap($tracks, $index, 0);
+				$delcount++;
+			}
+		}
+	}
+
 	$ret = $rdio->setPlaylistOrder([
 		'playlist'=>$_POST["playlist"],
-		'tracks'=>implode(",", $_POST['tracks'])
+		'tracks'=>implode(",", $tracks)
 		]);
-	json_output(['status'=>'ok']);
+
+	if ($delcount && $ret->status == 'ok')
+	{
+		$ret = $rdio->removeFromPlaylist([
+			'playlist'=>$_POST["playlist"],
+			'tracks'=>implode(",", $tracks),
+			'index'=>0,
+			'count'=>$delcount,
+			]);
+	}
+
+	if ($ret->status == 'ok') {
+		$playlist = $_POST["playlist"];
+		$ret = $rdio->get([
+			'keys'=>$playlist,
+			'extras'=>'trackKeys'
+			]);
+
+		if ($ret->status == 'ok')
+		{
+			$trackarr =& $ret->result->$playlist->trackKeys;
+			$tracks = $rdio->get(['keys'=>implode(",", $trackarr)])->result;
+			ob_start();
+			require('templates/playlist.php');
+			$html = ob_get_clean();
+			json_output(['status'=>'ok', 'html'=>$html]);
+		}
+	}
+
+	json_output($ret);
 }
 elseif (isset($_GET['playlist/saveas']))
 {
@@ -87,29 +145,24 @@ elseif (isset($_GET['playlist/saveas']))
 		'tracks'=>implode(",", $_POST['tracks'])
 		]);
 
-	$p = $ret->result;
-	ob_start();
-	include("templates/home_playlist_rec.php");
-	$html = ob_get_clean();
+	if ($ret->status == 'ok')
+	{
+		$p = $ret->result;
+		ob_start();
+		include("templates/home_playlist_rec.php");
+		$html = ob_get_clean();
+		json_output(['status'=>'ok', 'html'=>$html]);
+	}
 
-	json_output(['status'=>'ok', 'playlist_row_html'=>$html]);
+	json_output($ret);
 }
 elseif (isset($_GET['playlist/delete']))
 {
 	$ret = $rdio->deletePlaylist([
 		'playlist'=>$_POST["playlist"]
 		]);
-	json_output(['status'=>'ok']);
-}
-elseif (isset($_GET['track/delete']))
-{
-	$ret = $rdio->removeFromPlaylist([
-		'playlist'=>$_POST["playlist"],
-		'index'=>$_POST['index'],
-		'count'=>1,
-		'tracks'=>$_POST['track']
-		]);
-	json_output(['status'=>'ok']);
+
+	json_output($ret);
 }
 elseif (@$_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
 {
@@ -163,4 +216,12 @@ function json_output($data)
 	header('Content-Type: application/json');
 	echo json_encode($data);
 	die;
+}
+
+function array_swap(&$array, $a, $b)
+{
+	// adapted from moveElement() by http://stackoverflow.com/users/367456/hakre
+	// http://stackoverflow.com/questions/12624153/move-an-array-element-to-a-new-index-in-php
+    $out = array_splice($array, $a, 1);
+    array_splice($array, $b, 0, $out);
 }

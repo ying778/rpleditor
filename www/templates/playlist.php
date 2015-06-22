@@ -1,7 +1,7 @@
-<form playlist="<?=htmlEntities($_GET['playlist'])?>">
-<input type="hidden" name="playlist" value="<?=htmlEntities($_GET['playlist'])?>">
+<form playlist="<?=htmlEntities($playlist)?>">
+<input type="hidden" name="playlist" value="<?=htmlEntities($playlist)?>">
 <p style="font-size:12px"><span class="label label-info">Instructions</span> Click column headings to sort. Drag &amp; drop rows to reorder. Remember to Save.</p>
-<table class="table table-condensed sortable tracklist" id="playlist<?=htmlEntities($_GET['playlist'])?>" style="font-size:12px">
+<table class="table table-condensed sortable tracklist" id="playlist<?=htmlEntities($playlist)?>" style="font-size:12px">
 <thead>
 <tr>
 	<th style="width:10px">Track</th>
@@ -10,7 +10,7 @@
 	<th>Album</th>
 	<th>Duration</th>
 	<th>Status</th>
-	<th style="width:20px"></th>
+	<th style="width:20px" class="sorttable_nosort">Delete</th>
 </tr>
 </thead>
 <tbody>
@@ -32,7 +32,9 @@
 			<?if ($t->isExplicit) {?><span class="label label-important" style="font-size:9px">Explicit</span><?}?>
 			<?if (!$t->canStream) {?><span class="label label-warning" style="font-size:9px">Unavailable</span><?}?>
 		</td>
-		<td sorttable_customkey="<?=$i?>"><a class="close delete" style="display:none" title="Delete">&times;</a></td>
+		<td style="text-align:center">
+			<input class="chkdelete" type="checkbox" name="delete[]" value="<?=htmlEntities($t->key)?>">
+		</td>
 	</tr>
 <?}?>
 </tbody>
@@ -40,22 +42,17 @@
 </form>
 <script>
 $(document).ready(function() {
-	tbl = $('#playlist<?=htmlEntities($_GET['playlist'])?>')[0];
+	tbl = $('#playlist<?=htmlEntities($playlist)?>')[0];
 	sorttable.makeSortable(tbl);
 
-	$('a.delete').click(function() {
+	$('input.chkdelete').click(function() {
 		var row = $(this).closest('tr');
-		if (row.hasClass('deleted')) {
-			row.removeClass('deleted');
+		if (this.checked) {
+			row.addClass('delete');
 		} else {
-			row.addClass('deleted');
+			row.removeClass('delete');
 		}
 	});
-
-	$(tbl).find('tr').hover(
-		function() {$(this).find('.close').show()},
-		function() {$(this).find('.close').hide()}
-	);
 
 	$(tbl).find('tbody')
 		.sortable({

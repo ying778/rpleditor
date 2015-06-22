@@ -56,19 +56,25 @@ $(document).ready(function() {
 		var row = me.closest('tr');
 		var msg = me.parent().find('.messages');
 		var playlist = me.closest('[playlist]').attr('playlist');
-		var params = row.next('tr').find('form').serializeArray();
+		var playlistbody = row.next('tr').find('.tracks');
+		var form = row.next('tr').find('form');
+		var deltracks = form.find('input.chkdelete:checked');
 
-		me.attr('disabled', true);
-		msg.html('<span class="label label-info">Saving...</span>');
+		if (deltracks.length == 0 || confirm('Save playlist order and delete '+deltracks.length+' tracks?')) {
+			var params = form.serializeArray();
 
-		$.post('<?=WWWROOT?>/?playlist/save', params, function(data, textStatus, jqXHR) {
-			if (data.status == 'ok') {
-				row.next('tr').find('.tracks').load('<?=WWWROOT?>/?playlist='+playlist, function() {
+			me.attr('disabled', true);
+			msg.html('<span class="label label-info">Saving...</span>');
+			playlistbody.addClass('faded');
+
+			$.post('<?=WWWROOT?>/?playlist/save', params, function(data, textStatus, jqXHR) {
+				if (data.status == 'ok') {
+					playlistbody.html(data.html).removeClass('faded');
 					me.attr('disabled', false);
 					msg.html('<span class="label label-success">Saved</span>');
-				});
-			}
-		}, 'JSON');
+				}
+			}, 'JSON');
+		}
 	});
 
 	$('#playlist_container').on('click', '.playlist_buttons .btnSaveAs', function() {
@@ -89,7 +95,7 @@ $(document).ready(function() {
 				if (data.status == 'ok') {
 					msg.html('');
 
-					var newrow = $(data.playlist_row_html);
+					var newrow = $(data.html);
 					$('body').animate({scrollTop:$('#playlist_container').offset().top}, 250);
 					$('#playlist_container').prepend(newrow);
 					newrow.find('.playlist_name').after('<span class="label label-success" style="margin-left:10px">New</span>');

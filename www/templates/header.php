@@ -18,5 +18,6 @@
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
 <script src="<?=asset("js/vendor/sorttable.js")?>"></script>
 <script src="<?=asset("js/vendor/modernizr-2.6.2-respond-1.1.0.min.js")?>"></script>
+<script src="<?=asset("js/vendor/bootstrap.min.js")?>"></script>
 </head>
 <body>

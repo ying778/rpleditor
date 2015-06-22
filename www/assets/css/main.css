@@ -9,6 +9,6 @@ table.tracklist tr.placeholder td {border-top:1px dashed black;border-bottom:1px
 table.tracklist tr.moved {background-color:#ffffee}
 table.tracklist tr.moving {background-color:#ffffcc;font-weight:bold}
 table.tracklist tr.unavailable td {color:#c0c0c0}
-table.tracklist tr.delete td {text-decoration:line-through}
+table.tracklist tr.delete td {text-decoration:line-through;background-color:#ffc0c0;color:red}
 
 .faded {opacity:.3}
