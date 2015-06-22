@@ -1,15 +1,15 @@
 Rdio Playlist Editor by Ying Zhang
 =========
 
-A simple Rdio Playlist editor with the ability to sort songs by artist / album.
+A simple Rdio Playlist editor, with these features:
+* sort your tracks (by title, artist, album, duration)
+* make copies of your playlist
+* more...
 
-Uses Rdio API and code from:
-http://developer.rdio.com/docs/read/rest/rdiosimple
-
-Working version at:
+Use it online now:
 http://rpleditor.mirawest.com/
 
-Fork the code at:
+Source code at:
 https://github.com/ying17/rpleditor
 
 Enjoy!
