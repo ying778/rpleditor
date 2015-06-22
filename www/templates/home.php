@@ -31,7 +31,7 @@
 </div>
 <script>
 $(document).ready(function() {
-	$('#playlist_container .playlist_buttons').on('click', '.btnEdit', function() {
+	$('#playlist_container').on('click', '.playlist_buttons .btnEdit', function() {
 		var me = $(this);
 		var row = me.closest('tr');
 		var msg = me.parent().find('.messages');
@@ -39,7 +39,7 @@ $(document).ready(function() {
 		var playlistbody = row.next('tr').find('td.edit');
 
 		me.attr('disabled', true);
-		msg.html('<span class="label label-info">Loading...</span>');
+		msg.html('<span class="label label-info">Loading tracks...</span>');
 
 		playlistbody.addClass('faded').load('<?=WWWROOT?>/?playlist='+playlist, function() {
 			me.attr('disabled', false);
@@ -51,7 +51,7 @@ $(document).ready(function() {
 		});
 	});
 
-	$('#playlist_container .playlist_buttons').on('click', '.btnSave', function() {
+	$('#playlist_container').on('click', '.playlist_buttons .btnSave', function() {
 		var me = $(this);
 		var row = me.closest('tr');
 		var msg = me.parent().find('.messages');
@@ -71,7 +71,7 @@ $(document).ready(function() {
 		}, 'JSON');
 	});
 
-	$('#playlist_container .playlist_buttons').on('click', '.btnSaveAs', function() {
+	$('#playlist_container').on('click', '.playlist_buttons .btnSaveAs', function() {
 		var me = $(this);
 		var row = me.closest('tr');
 		var msg = me.parent().find('.messages');
@@ -93,13 +93,13 @@ $(document).ready(function() {
 					$('body').animate({scrollTop:$('#playlist_container').offset().top}, 250);
 					$('#playlist_container').prepend(newrow);
 					newrow.find('.messages').html('<span class="label label-success">New playlist created</span>');
-					newrow.find('.editbutton').trigger('click');
+					newrow.find('.btnEdit').trigger('click');
 				}
 			}, 'JSON');
 		}
 	});
 
-	$('#playlist_container .playlist_buttons').on('click', '.btnDelete', function() {
+	$('#playlist_container').on('click', '.playlist_buttons .btnDelete', function() {
 		var me = $(this);
 		var row = me.closest('tr');
 		var msg = me.parent().find('.messages');
