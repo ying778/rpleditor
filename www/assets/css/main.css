@@ -1,8 +1,14 @@
 body{margin:0;padding:30px}
-table.playlist thead {cursor:pointer;background-color:#f0f0f0}
-table.playlist tr:hover {background-color:#f5f5f5}
-table.playlist tr.placeholder td {border-top:1px dashed black;border-bottom:1px dashed black;background-color:#f5f5f5}
-table.playlist tr.moved {background-color:#ffffee}
-table.playlist tr.moving {background-color:#ffffcc;font-weight:bold}
-table.playlist tr.unavailable td {color:#c0c0c0}
+
+table.playlist tr.playlist_row1 {border-bottom:none}
+table.playlist tr.playlist_row2 {}
+
+table.tracklist thead {cursor:pointer;background-color:#f0f0f0}
+table.tracklist tr:hover {background-color:#f5f5f5}
+table.tracklist tr.placeholder td {border-top:1px dashed black;border-bottom:1px dashed black;background-color:#f5f5f5}
+table.tracklist tr.moved {background-color:#ffffee}
+table.tracklist tr.moving {background-color:#ffffcc;font-weight:bold}
+table.tracklist tr.unavailable td {color:#c0c0c0}
+table.tracklist tr.delete td {text-decoration:line-through}
+
 .faded {opacity:.3}

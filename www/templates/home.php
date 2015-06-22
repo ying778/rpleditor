@@ -1,18 +1,18 @@
 <div class="container">
 
-<div class="row" style="border-bottom:1px solid #c0c0c0;margin-bottom:20px">
-	<div class="span12">
-		<h3>
-			<img src="<?=$_SESSION["user"]->icon?>" width="50" height="50">
-			<?=htmlentities($_SESSION["user"]->firstName)?>'s Rdio Playlists
-			<a class="btn pull-right" href="<?=WWWROOT?>/?logout">Logout</a>
-			<a class="btn pull-right" href="<?=WWWROOT?>" style="margin-right:5px">Refresh</a>
-		</h3>
+<div class="row" style="margin-bottom:20px">
+	<div class="span8 lead">
+		<img src="<?=$_SESSION["user"]->icon?>" width="50" height="50">
+		<?=htmlentities($_SESSION["user"]->firstName)?>'s Rdio Playlists
+	</div>
+	<div class="span4" style="text-align:right">
+		<a class="btn" href="<?=WWWROOT?>">Refresh</a>
+		<a class="btn" href="<?=WWWROOT?>/?logout">Logout</a>
 	</div>
 </div>
 <div class="row">
 	<div class="span12">
-		<table class="table">
+		<table class="table playlist">
 		<thead>
 		<tr>
 			<th style="width:50px"></th>
@@ -36,7 +36,7 @@ $(document).ready(function() {
 		var row = me.closest('tr');
 		var msg = me.parent().find('.messages');
 		var playlist = me.closest('[playlist]').attr('playlist');
-		var playlistbody = row.next('tr').find('td.edit');
+		var playlistbody = row.next('tr').find('.tracks');
 
 		me.attr('disabled', true);
 		msg.html('<span class="label label-info">Loading tracks...</span>');
@@ -77,7 +77,7 @@ $(document).ready(function() {
 		var msg = me.parent().find('.messages');
 		var playlist = me.closest('[playlist]').attr('playlist');
 
-		var newname = 'Copy of '+row.find('td.name').text();
+		var newname = 'Copy of '+row.find('.playlist_name').text();
 		if (newname = prompt('Enter new playlist name', newname)) {
 			var params = row.next('tr').find('form').serializeArray();
 			params.push({name:"newname", value:newname});
@@ -92,7 +92,7 @@ $(document).ready(function() {
 					var newrow = $(data.playlist_row_html);
 					$('body').animate({scrollTop:$('#playlist_container').offset().top}, 250);
 					$('#playlist_container').prepend(newrow);
-					newrow.find('.messages').html('<span class="label label-success">New playlist created</span>');
+					newrow.find('.playlist_name').after('<span class="label label-success" style="margin-left:10px">New</span>');
 					newrow.find('.btnEdit').trigger('click');
 				}
 			}, 'JSON');
@@ -105,15 +105,20 @@ $(document).ready(function() {
 		var msg = me.parent().find('.messages');
 		var playlist = me.closest('[playlist]').attr('playlist');
 
-		if ('OK' == prompt('Delete playlist "'+row.find('td.name').text()+'".\n\nType OK to proceed.', '').toUpperCase()) {
+		if ('OK' == prompt('Delete playlist "'+row.find('.playlist_name').text()+'".\n\nType OK to proceed (all uppercase).', '')) {
 			me.attr('disabled', true);
 			msg.html('<span class="label label-info">Deleting...</span>');
 			var params = {playlist:playlist}
 			$.post('<?=WWWROOT?>/?playlist/delete', params, function(data, textStatus, jqXHR) {
 				me.attr('disabled', false);
 				if (data.status == 'ok') {
+					var trackrow = row.next('tr');
 					row.fadeOut(function() {
 						row.remove();
+					});
+					trackrow.fadeOut(function() {
+						trackrow.remove();
+						$('body').scrollTop(0);
 					});
 				}
 			}, 'JSON');
