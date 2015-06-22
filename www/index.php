@@ -64,15 +64,44 @@ if (empty($_SESSION["user"]))
 	logout();
 }
 
-if (isset($_GET['save']))
+if (isset($_GET['playlist']))
+{
+	$tmp = $rdio->get(['keys'=>$_GET['playlist'], 'extras'=>'trackKeys'])->result->$_GET['playlist'];
+	$trackarr = $tmp->trackKeys;
+	$tracks = $rdio->get(['keys'=>implode(",", $trackarr)])->result;
+	require('templates/playlist.php');
+}
+elseif (isset($_GET['playlist/save']))
 {
 	$ret = $rdio->setPlaylistOrder([
 		'playlist'=>$_POST["playlist"],
-		'tracks'=>implode(",", $_POST['keys'])
+		'tracks'=>implode(",", $_POST['tracks'])
 		]);
-	die(json_encode(['status'=>'ok']));
+	json_output(['status'=>'ok']);
 }
-elseif (isset($_GET['delete']))
+elseif (isset($_GET['playlist/saveas']))
+{
+	$ret = $rdio->createPlaylist([
+		'name'=>$_POST["newname"],
+		'description'=>$_POST["newname"],
+		'tracks'=>implode(",", $_POST['tracks'])
+		]);
+
+	$p = $ret->result;
+	ob_start();
+	include("templates/home_playlist_rec.php");
+	$html = ob_get_clean();
+
+	json_output(['status'=>'ok', 'playlist_row_html'=>$html]);
+}
+elseif (isset($_GET['playlist/delete']))
+{
+	$ret = $rdio->deletePlaylist([
+		'playlist'=>$_POST["playlist"]
+		]);
+	json_output(['status'=>'ok']);
+}
+elseif (isset($_GET['track/delete']))
 {
 	$ret = $rdio->removeFromPlaylist([
 		'playlist'=>$_POST["playlist"],
@@ -80,14 +109,11 @@ elseif (isset($_GET['delete']))
 		'count'=>1,
 		'tracks'=>$_POST['track']
 		]);
-	die(json_encode(['status'=>'ok']));
+	json_output(['status'=>'ok']);
 }
-elseif (isset($_GET['playlist']))
+elseif (@$_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest')
 {
-	$tmp = $rdio->get(['keys'=>$_GET['playlist'], 'extras'=>'trackKeys'])->result->$_GET['playlist'];
-	$trackarr = $tmp->trackKeys;
-	$tracks = $rdio->get(['keys'=>implode(",", $trackarr)])->result;
-	require('templates/playlist.php');
+	json_output(['status'=>'unknown method call']);
 }
 else
 {
@@ -129,5 +155,12 @@ function logout()
 {
 	session_destroy();
 	header('Location: '.WWWROOT);
+	die;
+}
+
+function json_output($data)
+{
+	header('Content-Type: application/json');
+	echo json_encode($data);
 	die;
 }

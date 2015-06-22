@@ -9,7 +9,7 @@
 	<th>Artist</th>
 	<th>Album</th>
 	<th>Duration</th>
-	<th>Explicit</th>
+	<th>Status</th>
 	<th style="width:20px"></th>
 </tr>
 </thead>
@@ -17,10 +17,10 @@
 <?$i=0?>
 <?foreach ($trackarr as $tkey) {?>
 	<?$t =& $tracks->$tkey?>
-	<tr index="<?=$i?>" track="<?=htmlEntities($t->key)?>">
+	<tr index="<?=$i?>" track="<?=htmlEntities($t->key)?>" <?if (!$t->canStream) {?>class="unavailable"<?}?>>
 		<td sorttable_customkey="<?=$i?>">
 			<?=++$i?>
-			<input type="hidden" name="keys[]" value="<?=htmlEntities($t->key)?>">
+			<input type="hidden" name="tracks[]" value="<?=htmlEntities($t->key)?>">
 		</td>
 		<td>
 			<?=htmlentities($t->name)?>
@@ -28,7 +28,10 @@
 		<td><?=htmlentities($t->artist)?></td>
 		<td><?=$t->album?></td>
 		<td sorttable_customkey="<?=$t->duration?>" style="text-align:right"><?=sprintf("%d:%02d", floor($t->duration/60), ($t->duration%60))?></td>
-		<td sorttable_customkey="<?=$t->isExplicit?0:1?>"><?if ($t->isExplicit) {?><span class="label label-important" style="font-size:9px">Explicit</span><?}?></td>
+		<td sorttable_customkey="<?=$t->isExplicit?'E':'-'?><?=$t->canStream?'-':'U'?>">
+			<?if ($t->isExplicit) {?><span class="label label-important" style="font-size:9px">Explicit</span><?}?>
+			<?if (!$t->canStream) {?><span class="label label-warning" style="font-size:9px">Unavailable</span><?}?>
+		</td>
 		<td sorttable_customkey="<?=$i?>"><a class="close delete" style="display:none" title="Delete">&times;</a></td>
 	</tr>
 <?}?>
