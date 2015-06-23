@@ -130,6 +130,12 @@ $(document).ready(function() {
 		}
 	});
 
+	$('#playlist_container').on('click', '.track_buttons .btnShuffle', function() {
+		var playlistbody = $(this).closest('div.tracklist_container').find('tbody');
+		shuffleRows(playlistbody);
+		playlistbody.find('tr').addClass('moved');
+	});
+
 	$('#playlist_container').on('click', '.track_buttons .btnDeDupe', function() {
 		var dupes = 0;
 		var tracks = {};
@@ -155,6 +161,17 @@ $(document).ready(function() {
 		}
 	});
 });
+
+// http://jsfiddle.net/98q9S/
+function shuffleRows(parent) {
+	var rows = parent.children();
+	for (var i = rows.length - 1; i > 0; i--) {
+		var j = Math.floor(Math.random() * (i + 1));
+		var temp = rows[i];
+		rows.eq(i - 1).after(rows[j]);
+		rows.eq(j - 1).after(temp);
+	}
+}
 </script>
 
 </div> <?//container?>
