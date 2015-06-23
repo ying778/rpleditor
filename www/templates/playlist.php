@@ -2,6 +2,7 @@
 <p style="font-size:12px"><span class="label label-info">Instructions</span> Click column headings to sort. Drag &amp; drop rows to reorder. Remember to Save.</p>
 
 <div class="track_buttons" style="margin-bottom:5px">
+<button class="btn btn-mini btnShuffle"><i class="icon-random"></i> Shuffle Tracks</button>
 <button class="btn btn-mini btnDeDupe"><i class="icon-minus"></i> Find Duplicates</button>
 </div>
 

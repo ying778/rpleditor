@@ -1,7 +1,9 @@
 <footer class="footer">
 	<div class="container" style="text-align:center">
-	Playlist Editor for <a href="http://www.rdio.com">Rdio</a> by Ying Zhang &middot; <a href="https://twitter.com/ying778">Follow for updates</a>
-	&middot; If this helped you, please <a href="http://www.bcchf.ca/donate/">pay it forward</a>.
+	Playlist Editor for <a href="http://www.rdio.com">Rdio</a>
+	by <a href="https://twitter.com/ying778">@ying778</a>, <a href="https://twitter.com/jmhobbs">@jmhobbs</a>
+	&middot; If this helped you, please <a href="http://www.bcchf.ca/donate/">pay it forward</a>
+	&middot; <a href="https://github.com/ying17/rpleditor">GitHub</a>
 	</div>
 </footer>
 
