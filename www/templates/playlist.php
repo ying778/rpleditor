@@ -1,6 +1,12 @@
-<form playlist="<?=htmlEntities($playlist)?>">
-<input type="hidden" name="playlist" value="<?=htmlEntities($playlist)?>">
+<div class="tracklist_container">
 <p style="font-size:12px"><span class="label label-info">Instructions</span> Click column headings to sort. Drag &amp; drop rows to reorder. Remember to Save.</p>
+
+<div class="track_buttons" style="margin-bottom:5px">
+<button class="btn btn-mini btnDeDupe"><i class="icon-minus"></i> Find Duplicates</button>
+</div>
+
+<form>
+<input type="hidden" name="playlist" value="<?=htmlEntities($playlist)?>">
 <table class="table table-condensed sortable tracklist" id="playlist<?=htmlEntities($playlist)?>" style="font-size:12px">
 <thead>
 <tr>
@@ -22,10 +28,8 @@
 			<?=++$i?>
 			<input type="hidden" name="tracks[]" value="<?=htmlEntities($t->key)?>">
 		</td>
-		<td>
-			<?=htmlentities($t->name)?>
-		</td>
-		<td><?=htmlentities($t->artist)?></td>
+		<td class="name"><?=htmlentities($t->name)?></td>
+		<td class="artist"><?=htmlentities($t->artist)?></td>
 		<td><?=$t->album?></td>
 		<td sorttable_customkey="<?=$t->duration?>" style="text-align:right"><?=sprintf("%d:%02d", floor($t->duration/60), ($t->duration%60))?></td>
 		<td sorttable_customkey="<?=$t->isExplicit?'E':'-'?><?=$t->canStream?'-':'U'?>">
@@ -40,6 +44,8 @@
 </tbody>
 </table>
 </form>
+</div>
+
 <script>
 $(document).ready(function() {
 	tbl = $('#playlist<?=htmlEntities($playlist)?>')[0];
