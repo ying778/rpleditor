@@ -44,8 +44,7 @@ $(document).ready(function() {
 		playlistbody.addClass('faded').load('<?=WWWROOT?>/?playlist='+playlist, function() {
 			me.attr('disabled', false);
 			msg.html('');
-			me.parent().find('.btnSave').show().attr('disabled', false);
-			me.parent().find('.btnSaveAs').show().attr('disabled', false);
+			me.parent().find('.btn.showOnEdit').show().attr('disabled', false);
 			$('body').animate({scrollTop:row.offset().top}, 250);
 			playlistbody.removeClass('faded');
 		});
@@ -128,6 +127,31 @@ $(document).ready(function() {
 					});
 				}
 			}, 'JSON');
+		}
+	});
+
+	$('#playlist_container').on('click', '.track_buttons .btnDeDupe', function() {
+		var dupes = 0;
+		var tracks = {};
+		var playlistbody = $(this).closest('div.tracklist_container').find('tbody');
+
+		playlistbody.find('input.chkdelete:checked').trigger('click');
+		playlistbody.find('tr[track]').each(function () {
+			var track = $(this).attr("track");
+			var trackhash = $(this).find('.name').text()+$(this).find('.artist').text();
+			if (track in tracks || trackhash in tracks) {
+				$(this).find('input.chkdelete').trigger('click');
+				dupes++;
+			} else {
+				tracks[track] = true;
+				tracks[trackhash] = true;
+			}
+		});
+
+		if (dupes == 0) {
+			alert('No duplicates found');
+		} else {
+			alert('Found '+dupes+' duplicates');
 		}
 	});
 });
